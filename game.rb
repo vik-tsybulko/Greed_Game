@@ -3,6 +3,7 @@ require_relative './output_on_console.rb'
 class Game
   def initialize(players)
     @players = players
+    @final_score = final_score
   end
   @@scoreInRound = 0
   @@output = OutputOnConsole.new
@@ -52,7 +53,6 @@ class Game
     @@dices.each do |dice|
       @@res << dice.roll
     end
-
     @@output.resultRollOfDice(@@res, namePlayer)
     return @@res
   end
@@ -60,6 +60,9 @@ class Game
   def whichCombination(player)
     @@isZonk = true
     @@scoreInRoll = 0
+    if player.score < 300 && player.score != 0
+      @allow_save_score = true
+    end
     res = rollDice(player.dices, player.name)
 
     res.uniq.each do |i|
@@ -69,13 +72,14 @@ class Game
         @@isZonk = false
       end
     end
-    @@scoreInRound += @@scoreInRoll
+      @@scoreInRound += @@scoreInRoll
     if @@isZonk == true
       puts "Вам не повезло, в этом броске нет комбинаций, очки за этот ход сгорают"
       @@scoreInRound = 0
     else
       puts "За этот бросок вы набрали #{@@scoreInRoll} очков и у вас осталось #{player.dices} кубик(ов) для броска"
       puts "В этом ходе вы набрали #{@@scoreInRound}"
+
     end
     if @@isZonk == false
       if player.dices > 0
@@ -90,10 +94,20 @@ class Game
     end
   end
   def putsScore(player)
-    puts "Общее количество Ваших очков = #{player.score += @@scoreInRound}"
+    if @@scoreInRound <= 300 && player.allow_save_score == false && @@isZonk == false
+      player.allow_save_score = true
+      # puts "Общее количество Ваших очков = #{player.score += @@scoreInRound}"
+    end
+    if player.allow_save_score == false && @@isZonk == false
+      puts "Для накопления очков нужно заработать менее 300 очков за один ход\nВаши очки не записаны"
+    end
+
+    if player.allow_save_score == true
+           puts "Общее количество Ваших очков = #{player.score += @@scoreInRound}"
+    end
+
     player.dices = 5
     @@scoreInRound = 0
     puts "---------------------------------------------------------------------------"
   end
-
 end

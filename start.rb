@@ -7,11 +7,12 @@ require_relative './calculation_of_result.rb'
 class Start
   output = OutputOnConsole.new
   input = InputParameter.new
-  calc = CalculationOfResult.new
+
 
   output.enterNumberOfPlayers
   output.enterNamePlayer(input.enterCountUsers)
   game = Game.new($users)
+  calc = CalculationOfResult.new(input.get_final_score)
 
   loop do
     $users.each do |player|
@@ -20,13 +21,41 @@ class Start
       game.whichCombination(player)
       game.putsScore(player)
     end
-    calc.winner($users)
-
-    break if input.iscontinue == false
+    # calc.who_winner($users)
+    calc.is_end
+    end_end = false
+    $users.each do |player|
+      if player.winner == true
+        end_end = true
+      end
+    end
+    if end_end == true
+      break
+    end
   end
+  puts "Финальный круг, в нем принимают участие:"
+participants =[]
+  $users.each do |player|
+    if player.winner == false
+      participants << player
+    end
+  end
+  participants.each do |player|
+    print "#{player.name} "
+  end
+  puts
+  participants.each do |player|
+
+    puts "Ходит #{player.name}"
+    output.rollDice
+    game.whichCombination(player)
+    game.putsScore(player)
+  end
+
+  puts "Поздравляем #{calc.who_winner($users)} с победой!!!"
 
 end
 #баги:
-# 1. Когда у двух пользователей одинаковый результат выдает одного из них
-# 2. Завершает программу если ввести в количество игроков букву
-# 3.
+# 1. Когда у нескольких пользователей одинаковый результат выдает последнего из них
+# 2. Завершает программу если ввести в количество игроков не цифру
+# 4. Когда выпало 4 пятерки - посчитало по 50 очков, вместо 500 + 50

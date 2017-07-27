@@ -21,5 +21,9 @@ class InputParameter
     answer = gets.chomp
     @@continuee = (answer == "д" || answer == "д".upcase) ? true : false
   end
+  def get_final_score
+    puts "Введите количество очков которые нужно собрать для победы"
+    final_score = gets.chomp.to_i
+  end
 
 end

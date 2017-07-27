@@ -1,5 +1,8 @@
 class CalculationOfResult
-  def winner(players)
+  def initialize(final_score)
+    @final_score = final_score
+  end
+  def who_winner(players)
     @scores = {}
     players.each do |player|
     @scores[player] = player.score
@@ -17,6 +20,14 @@ class CalculationOfResult
       printf "|%-2s|%-12s|%-5s|", i, key.name, value; puts
       i += 1
     end
-
+    puts "___________________________________________________________________________"
+    return max.first.name
+  end
+  def is_end
+    $users.each do |player|
+      if player.score >= @final_score
+         player.winner = true
+      end
+    end
   end
 end
